@@ -2,4 +2,14 @@
 /model_components/checkpoints
 /test_data
 /__pycache__
-
+/model_components/__pycache__
+/model_components/configs/detection/__pycache__
+/model_components/configs/person_ReID_img/__pycache__
+/model_components/configs/tracking/__pycache__
+/model_components/detection/__pycache__
+/model_components/detection/modeling/yolov5/models/__pycache__
+/model_components/detection/modeling/yolov5/utils/__pycache__
+/model_components/person_ReID_img/__pycache__
+/model_components/person_ReID_img/modeling/__pycache__
+/model_components/tracking/__pycache__
+/model_components/tracking/modeling/__pycache__
