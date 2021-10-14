@@ -19,9 +19,9 @@ class Detection_Tracking:
 			self.tracking = Tracking()
 
 	def run(self, frame):
-		bboxs, det_img_shape = self.detection.run(frame)
-
-		return self.tracking.run(bboxs[0], frame, det_img_shape=det_img_shape, frame_shape=frame.shape)
+		det = self.detection.run([frame])[0]
+		tracklets, infos = self.tracking.run(det, frame)
+		return tracklets, infos
 
 
 
@@ -34,11 +34,10 @@ if __name__ == '__main__':
 	ret, frame = frame_reader.read()
 	idx = 0
 	while ret:
-		tracklets, confs = det_and_trk.run(frame)
-		print(idx)
+		tracklets, infos  = det_and_trk.run(frame)
 		print(tracklets)
+		print(infos)
 
-		print(confs)
 		print('#'*64)
 		idx += 1
 		ret, frame = frame_reader.read()

@@ -41,7 +41,7 @@ class PersonReIDImg_FeatureComparison:
 if __name__ == '__main__':
 	sample_path = '/home/xzy/projects/Worksite_Monitors/test_data/2021湖人vs勇士/people_samples'
 	test_img_path = '/home/xzy/projects/Worksite_Monitors/test_data/2021湖人vs勇士/results_tracklets/clip0/tracklets/18'
-	img_names = os.listdir(test_img_path)[2:10]
+	img_names = os.listdir(test_img_path)
 	test_imgs = []
 	for img_name in img_names:
 		img = cv2.imread(os.path.join(test_img_path, img_name))

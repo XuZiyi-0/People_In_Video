@@ -52,7 +52,7 @@ class DeepSort(object):
             x1, y1, x2, y2 = self._tlwh_to_xyxy(box)
             track_id = track.track_id
             class_id = track.class_id
-            outputs.append(np.array([x1, y1, x2, y2, track_id, class_id], dtype=np.float32))
+            outputs.append(np.array([x1, y1, x2, y2, track_id, class_id], dtype=np.int32))
             infos['det_score'].append(score)
             infos['associate_metric'].append(match[2])
             infos['distance'].append(match[3])
