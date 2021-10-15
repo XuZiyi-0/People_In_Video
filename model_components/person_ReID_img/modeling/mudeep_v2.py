@@ -3,12 +3,17 @@ import torch
 import cv2
 import numpy as np
 import time
+from torchvision import transforms
+from PIL import Image
+import warnings
+warnings.filterwarnings('ignore')
 
 from model_components.person_ReID_img.modeling.MuDeep_v2.network import MuDeep_v2
 from model_components.utils import BGR_hwc_to_RGB_chw
 from model_components.configs.person_ReID_img import mudeepv2_cfg
 
 from model_components.person_ReID_img.modeling.build import PERSON_REID_IMG_REGISTRY
+
 
 @PERSON_REID_IMG_REGISTRY.register()
 def build_mudeepv2():
@@ -27,6 +32,12 @@ class MuDeep_v2_:
 		with torch.no_grad():
 			self.model.load_state_dict(torch.load(self.cfg.CHECKPOINT, map_location=self.device)['state_dict'])
 
+		self.transformer = transforms.Compose([
+			transforms.Resize(self.cfg.IMG_SIZE, interpolation=3),
+			transforms.ToTensor(),
+			transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+		])
+
 	def fliplr(self, img):
 		inv_idx = torch.arange(img.size(3) - 1, -1, -1).long()  # N x c x H x W
 		img_flip = img.index_select(3, inv_idx)
@@ -35,11 +46,12 @@ class MuDeep_v2_:
 	def preprocess(self, imgs0):
 		imgs = []
 		for i in range(len(imgs0)):
-			img = cv2.resize(imgs0[i], dsize=(self.cfg.IMG_SIZE[1], self.cfg.IMG_SIZE[0]), interpolation=cv2.INTER_CUBIC)
-			img = BGR_hwc_to_RGB_chw(img)
+			img = cv2.cvtColor(imgs0[i], cv2.COLOR_BGR2RGB)
+			img = Image.fromarray(img)
+			img = self.transformer(img)
+			img = img.unsqueeze(0)
 			imgs.append(img)
-		imgs = np.array(imgs)
-		imgs = torch.from_numpy(imgs).float()
+		imgs = torch.cat(imgs)
 		return imgs
 
 
