@@ -11,7 +11,10 @@ from model_components import PersonReIDImg
 class PersonReIDImg_FeatureComparison:
 	def __init__(self, sample_path):
 		self.sample_reader = PersonReIDImgSampleReader(sample_path)
+		if not os.path.exists(os.path.join(sample_path, 'features.pt')):
+			self.sample_reader.save_features()
 		self.sample_reader.read_features()
+
 		self.samples = self.sample_reader.samples
 		self.person_reid_img = PersonReIDImg()
 
@@ -39,9 +42,9 @@ class PersonReIDImg_FeatureComparison:
 
 
 if __name__ == '__main__':
-	sample_path = '/home/xzy/projects/Worksite_Monitors/test_data/2021湖人vs勇士/people_samples'
-	test_img_path = '/home/xzy/projects/Worksite_Monitors/test_data/2021湖人vs勇士/results_tracklets/clip0/tracklets/18'
-	img_names = os.listdir(test_img_path)
+	sample_path = '/home/xzy/projects/People_In_Video/test_data/hurenVSyongshi/people_samples'
+	test_img_path = '/home/xzy/projects/People_In_Video/test_data/hurenVSyongshi/results_tracklets/clip0/tracklets/18'
+	img_names = os.listdir(test_img_path)[2:10]
 	test_imgs = []
 	for img_name in img_names:
 		img = cv2.imread(os.path.join(test_img_path, img_name))
