@@ -50,7 +50,7 @@ def demo(data_root, video_name, interval=10):
 		# print(infos.keys())
 		# print('#'*64)
 		if len(tracklets) > 0:
-			# 保存踪片图像，每10帧保存一次
+			# 保存踪片图像，每n帧保存一次
 			if frame_idx%interval == 0:
 				tracklets_folder = os.path.join(data_root, 'results_tracklets', video_name.split('.')[0], 'tracklets')
 				if not os.path.exists(tracklets_folder):
