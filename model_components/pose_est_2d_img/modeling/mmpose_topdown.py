@@ -5,9 +5,15 @@ import mmcv
 import matplotlib.pyplot as plt
 import math
 
+# import general_config
+from general_config import general_cfg
+
 import sys
-sys.path.insert(0, os.path.abspath('../../opensources/mmpose'))
-print(sys.path)
+# sys.path.insert(0, os.path.abspath('../../opensources/mmpose'))
+# print(sys.path)
+# print(general_cfg.PROJECT_ROOT)
+sys.path.insert(0, os.path.abspath(general_cfg.PROJECT_ROOT + '/model_components/opensources/mmpose'))
+# print(sys.path)
 
 # from model_components.opensources.mmpose.mmpose.datasets import Compose
 from mmpose.datasets import Compose
@@ -16,9 +22,9 @@ from mmcv.parallel import collate
 from mmcv.image import imwrite
 
 from model_components.configs.pose_est_2d_img import mmpose_topdown_cfg
-from model_components.pose_est_2d_img.modeling.build import DETECTION_REGISTRY
+from model_components.pose_est_2d_img.modeling.build import POSE_EST_2D_IMG_REGISTRY
 
-# @DETECTION_REGISTRY.register()
+@POSE_EST_2D_IMG_REGISTRY.register()
 def build_mmpose_topdown():
     return mmpose_topdown()
 
@@ -53,7 +59,8 @@ class mmpose_topdown:
                 thickness (int): Thickness of lines.
         """
 
-        img = mmcv.imread(img)
+        # img = mmcv.imread(img)
+        # print(img)img
         img_h, img_w, _ = img.shape
         pose_result = [pose_result]
         for kpts in pose_result:
@@ -165,7 +172,7 @@ class mmpose_topdown:
         Returns:
             Tensor: Visualized img, only if not `show` or `out_file`.
         """
-        img = mmcv.imread(img)
+        # img = mmcv.imread(img)
         img = img.copy()
 
         mmpose_topdown.imshow_keypoints(img, pose_result, mmpose_topdown_cfg.skeleton, kpt_score_thr,
@@ -240,7 +247,7 @@ class mmpose_topdown:
             results['img'] = img
             return results
 
-    def run(self,imgs,return_heatmap = True):
+    def run(self, imgs, return_heatmap=True):
         channel_order = 'rgb'
         test_pipeline = [mmpose_topdown.LoadImage(channel_order=channel_order)
                          ] + mmpose_topdown_cfg.test_pipline[1:]
@@ -266,7 +273,7 @@ class mmpose_topdown:
 
             data = {
                 'img_or_path':
-                    img_path,
+                    img,
                 'center':
                     center,
                 'scale':
@@ -328,18 +335,18 @@ class mmpose_topdown:
         pose_kpt_color = palette[[
             16, 16, 16, 16, 16, 9, 9, 9, 9, 9, 9, 0, 0, 0, 0, 0, 0
         ]]
-        for i in range(len(res['image_paths'])):
-            img_name = res['image_paths'][i].split('/')[-1]
-            img_name = img_name.split('.')[0]
+        for i in range(len(res['preds'])):
+            # img_name = res['image_paths'][i].split('/')[-1]
+            # img_name = img_name.split('.')[0]
 
-            mmpose_topdown.show_result(res['image_paths'][i],
+            mmpose_topdown.show_result(imgs[i],
                         res['preds'][i],
                         kpt_score_thr=0.3,
                         pose_kpt_color=pose_kpt_color,
                         pose_link_color=pose_link_color,
                         radius=16,
                         thickness=7,
-                        out_file='/home/nk/mmpose/outputs/' + img_name + '.jpg'
+                        out_file='/home/nk/mmpose/outputs/' + str(i) + '.jpg'
                         )
 
             heatmap = res['output_heatmap'][i]
@@ -356,6 +363,9 @@ class mmpose_topdown:
 
 if __name__ == '__main__':
     img_path ="/home/nk/mmpose/test_img/0_14.jpg"
+    # img = mmcv.imread(img_path)
+    # print(type(img))
+    # print(img.shape)
     img = [cv2.imread(img_path)]
     # print(img)
     # print(img)

@@ -1,9 +1,9 @@
 from fvcore.common.registry import Registry
 
 
-DETECTION_REGISTRY = Registry('KEYPOINT_DETECTION')
+POSE_EST_2D_IMG_REGISTRY = Registry('POSE_EST_2D_IMG_REGISTRY')
 
 def build_keypoint_detection_model(cfg):
 	model_name = cfg.MODEL_NAME
-	model = DETECTION_REGISTRY.get(model_name)()
+	model = POSE_EST_2D_IMG_REGISTRY.get(model_name)()
 	return model

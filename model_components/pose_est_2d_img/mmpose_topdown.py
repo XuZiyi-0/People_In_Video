@@ -4,8 +4,8 @@ if __name__ == '__main__':
 	sys.path.insert(0,os.path.abspath('../../'))
 
 ########################################################################################################################
-from model_components.configs.pose_est_2d_img import keypoint_detection_common_cfg
-from model_components.pose_est_2d_img.modeling import build_keypoint_detection_model
+# from model_components.configs.pose_est_2d_img import keypoint_detection_common_cfg
+# from model_components.pose_est_2d_img.modeling import build_keypoint_detection_model
 
 # Detection模块：
 # 输入:
@@ -23,10 +23,10 @@ class keypoint_det:
 		return det
 ########################################################################################################################
 
-# if __name__ == '__main__':
-# 	# 单元测试：
-# 	import cv2
-# 	detection = Detection()
-# 	img = cv2.imread(os.path.abspath('../../test_data/imgs/c1s1_032051.jpg'))
-# 	det = detection.run([img])
+if __name__ == '__main__':
+	# 单元测试：
+	import cv2
+	detection = Detection()
+	img = cv2.imread(os.path.abspath('../../test_data/imgs/c1s1_032051.jpg'))
+	det = detection.run([img])
 keypoint_det.run()
