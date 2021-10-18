@@ -23,8 +23,7 @@ class osnet_:
         self.cfg = cfg
         self.cfg.freeze()
         self.device = torch.device('cuda:%d' % self.cfg.DEVICE_ID[0])
-
-        self.model = osnet_x1_0(num_classes=self.cfg.NUM_CLASS, pretrain=False, loss=self.cfg.Loss)
+        self.model = osnet_x1_0(num_classes=self.cfg.NUM_CLASS, pretrained=False, loss=self.cfg.Loss)
         self.model.to(self.device)
         self.model = torch.nn.DataParallel(self.model, device_ids=cfg.DEVICE_ID)
         self.model.eval()
@@ -53,10 +52,29 @@ class osnet_:
         imgs = torch.cat(imgs)
         return imgs
 
+    def fliplr(self, img):
+        inv_idx = torch.arange(img.size(3) - 1, -1, -1).long()  # N x c x H x W
+        img_flip = img.index_select(3, inv_idx)
+        return img_flip
+
     def run(self, imgs):
         with torch.no_grad():
             imgs = self.preprocess(imgs)
-            features = self.model.forward(imgs)
+            n, c, h, w = imgs.size()
+            # features = self.model.forward(imgs).cpu()
+
+            ff = torch.FloatTensor(n, 512).zero_()
+            for i in range(2):
+                if (i == 1):
+                    imgs = self.fliplr(imgs)
+                input_img = imgs.to(self.device)
+                out = self.model.forward(input_img)
+                f = out.data.cpu()
+                ff = ff + f / 2.
+
+
+            fnorm = torch.norm(ff, p=2, dim=1, keepdim=True)
+            features = ff.div(fnorm.expand_as(ff))
         return features
 
 
