@@ -1,7 +1,8 @@
 import cv2
 import numpy as np
 from visdom import Visdom
-
+import sys, os
+sys.path.insert(0,os.path.abspath('../../'))
 from modules.identity import PersonReIDImg_FeatureComparison
 
 def scale_resize(img, img_size):
