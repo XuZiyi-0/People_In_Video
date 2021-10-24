@@ -1,10 +1,10 @@
 from numba import jit
 from collections import deque
 import torch
-from utils.kalman_filter import KalmanFilter
-from utils.log import logger
-from models import *
-from tracker import matching
+from model_components.dec_and_trc.modeling.jde.utils.kalman_filter import KalmanFilter
+from model_components.dec_and_trc.modeling.jde.utils.log import logger
+from model_components.dec_and_trc.modeling.jde.models import *
+from model_components.dec_and_trc.modeling.jde.tracker import matching
 from .basetrack import BaseTrack, TrackState
 
 

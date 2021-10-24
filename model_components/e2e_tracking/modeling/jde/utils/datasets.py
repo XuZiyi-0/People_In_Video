@@ -11,7 +11,7 @@ import numpy as np
 import torch
 
 from torch.utils.data import Dataset
-from utils.utils import xyxy2xywh
+from model_components.dec_and_trc.modeling.jde.utils.utils import xyxy2xywh
 
 class LoadImages:  # for inference
     def __init__(self, path, img_size=(1088, 608)):

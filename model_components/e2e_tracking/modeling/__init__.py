@@ -1,2 +1,3 @@
-from .build import build_e2e_tracking_model,E2E_TRACKING_REGISTRY
+from .build import build_det_and_trc_model,DET_AND_TRC_REGISTRY
 from .jde_ import JDE
+from .bytes_ import Byte

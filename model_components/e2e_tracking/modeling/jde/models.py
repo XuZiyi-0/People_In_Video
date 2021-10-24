@@ -3,8 +3,8 @@ from collections import defaultdict,OrderedDict
 
 import torch.nn as nn
 
-from utils.parse_config import *
-from utils.utils import *
+from model_components.dec_and_trc.modeling.jde.utils.parse_config import *
+from model_components.dec_and_trc.modeling.jde.utils.utils import *
 import time
 import math
 
