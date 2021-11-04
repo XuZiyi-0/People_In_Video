@@ -52,51 +52,56 @@ class hypergraph_reid_:
         return img_flip
 
 
-    def preprocess(self, imgs0):
-        imgs = []
-        for i in range(len(imgs0)):
-            # print("aaa",imgs0[i])
-            img = cv2.cvtColor(imgs0[i], cv2.COLOR_BGR2RGB)
-            img = Image.fromarray(img)  # array转image,transform接收image格式的输入
-            img = self.transformer(img)
-            img = img.unsqueeze(0)
-            imgs.append(img)
-        imgs = torch.cat(imgs, dim=0)
-        self.imgs_list.append(imgs)
-        imgs_array = torch.stack(self.imgs_list)
-        return imgs_array
+    def preprocess(self, clips0):
+        clips = []
+        for imgs0 in clips0:
+            imgs = []
+            for i in range(len(imgs0)):
+                # print("aaa",imgs0[i])
+                img = cv2.cvtColor(imgs0[i], cv2.COLOR_BGR2RGB)
+                img = Image.fromarray(img)  # array转image,transform接收image格式的输入
+                img = self.transformer(img)
+                img = img.unsqueeze(0)
+                imgs.append(img)
+            imgs = torch.cat(imgs, dim=0)
+            clips.append(imgs)
+        clips = torch.stack(clips)
+        return clips
 
-    def run(self, imgs):
-        imgs = self.preprocess(imgs)
-        imgs = imgs.cuda()
-        qf = []
+    def run(self, clips):
+        clips = self.preprocess(clips)
+        clips = clips.to(self.device)
         with torch.no_grad():
             # b=1, n=number of clips, s=16
-            n, s, c, h, w = imgs.size()
+            n, s, c, h, w = clips.size()
             # assert (b == 1)
             # imgs = imgs.view(n, s, c, h, w)
             # features = model(imgs, adj1, adj2, adj3)
-            features = self.model.forward(imgs)
-            features = features.view(n, -1)
-            features = torch.mean(features, 0)
+            features = self.model(clips)
+            # 特征向量归一化
+            fnorm = torch.norm(features, p=2, dim=1, keepdim=True)
+            features = features.div(fnorm.expand_as(features))
             features = features.data.cpu()
-            qf.append(features)
-        qf = torch.stack(qf)
-        return qf
+        return features
 
 
 if __name__ == '__main__':
     # 单元测试
+    clips_path0 = '/home/xzy/datasets/MARS-v160809/bbox_test/0010'
+    clips_path1 = '/home/xzy/datasets/MARS-v160809/bbox_test/0050'
+    clip0 = []
+    clip1 = []
+    for i in range(1, 16):
+        img0_path = os.path.join(clips_path0, f'0010C1T0001F{i:0>3}.jpg')
+        img1_path = os.path.join(clips_path1, f'0050C2T0001F{i:0>3}.jpg')
+        clip0.append(cv2.imread(img0_path))
+        clip1.append(cv2.imread(img1_path))
+    clips = [clip0, clip1]
+    t0 = time.time()
     person_ReID_video =  hypergraph_reid_()
-    imgs = []
-    imgs_path = '/home/mnx/datasets/MARS-v160809/bbox_test/0010'
-    img_names = os.listdir(imgs_path)
-    for img_name in img_names:
-        imgs.append(cv2.imread(os.path.join(imgs_path, img_name)))
-
-    for i in range(10):
-        imgs_ = imgs[:]
-        t0 = time.time()
-        person_ReID_video.run(imgs_)
-        t1 = time.time()
-        print(t1 - t0)
+    features = person_ReID_video.run(clips)
+    t1 = time.time()
+    print(features.size())
+    print(features)
+    print(t1-t0)
+    print(torch.mm(features, features.t()))

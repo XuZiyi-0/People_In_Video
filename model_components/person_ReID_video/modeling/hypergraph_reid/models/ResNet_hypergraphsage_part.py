@@ -498,7 +498,7 @@ class BatchedDiffPool(nn.Module):
 
 
 
-class ResNet50GRAPHPOOLPARTHyper(nn.Module):
+class  ResNet50GRAPHPOOLPARTHyper(nn.Module):
     def __init__(self, pool_size, input_shape, n_classes, loss={'xent'}):
         super(ResNet50GRAPHPOOLPARTHyper, self).__init__()
         self.pool_size = pool_size
